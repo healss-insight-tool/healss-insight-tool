@@ -1,0 +1,9 @@
+survey,variable,eligible_n,missing_n,missing_pct_unweighted
+HINTS 7,EducA,4256,24,0.56
+HINTS 7,BirthSex,4256,39,0.92
+HINTS 7,ConfidentMedForms,4256,25,0.59
+HINTS 7,DigLit_SearchSkills (B5c),4256,25,0.59
+HINTS 7,GeneralHealth,4256,15,0.35
+PIAAC Cycle 2 U.S.,EDCAT8_TC1,3508,7,0.2
+PIAAC Cycle 2 U.S.,GENDER_R,3508,0,0.0
+PIAAC Cycle 2 U.S.,I2_Q03,3508,16,0.46

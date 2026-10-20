@@ -175,6 +175,11 @@ def benchmark_check():
     finally:
         os.chdir(cwd)
     s = pd.read_csv(os.path.join(step0, "step0_results.csv"))
+    # Step 0 also keeps two alternative education groupings ("ISCED 3 only", "ISCED 4+") to show that
+    # NCES groups high school as ISCED 3+4 and "more than high school" as ISCED 5+. Those rows are
+    # diagnostics, not benchmarks; the benchmarks are the rows with a published target under the NCES grouping.
+    diag = s["statistic"].str.contains(r"\(ISCED 3 only\)|\(ISCED 4\+\)", regex=True)
+    s = s[s["published"].notna() & ~diag]
     worst = s["diff"].abs().max()
     if worst > 0.5:
         raise SystemExit(f"Benchmark check failed: max |diff| = {worst:.2f} > 0.5; halting per registration.")

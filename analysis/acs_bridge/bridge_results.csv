@@ -1,0 +1,43 @@
+group,acs_n,acs_weighted_n,measure,source,est,se,se_acs,se_survey
+Medicaid (HINS4),302448,31596333.000,"Literacy at or below Level 1 (<226), %",PIAAC via ACS,35.999,1.325,0.058,1.324
+Medicaid (HINS4),302448,31596333.000,"Literacy below Level 3 (<276), %",PIAAC via ACS,65.818,1.286,0.058,1.284
+Medicaid (HINS4),302448,31596333.000,Mean literacy score,PIAAC via ACS,243.267,1.652,0.098,1.649
+Medicaid (HINS4),302448,31596333.000,"Very confident filling out medical forms, %",HINTS via ACS,59.676,1.492,0.036,1.492
+Medicaid (HINS4),302448,31596333.000,"Very or somewhat confident, %",HINTS via ACS,84.936,1.214,0.025,1.214
+Medicaid (HINS4),302448,31596333.000,"Share with no HS diploma, %",ACS,19.514,,,
+Medicaid (HINS4),302448,31596333.000,"Share with associate or higher, %",ACS,21.527,,,
+"Medicaid, no Medicare",257963,27723849.000,"Literacy at or below Level 1 (<226), %",PIAAC via ACS,35.330,1.348,0.061,1.346
+"Medicaid, no Medicare",257963,27723849.000,"Literacy below Level 3 (<276), %",PIAAC via ACS,65.077,1.329,0.063,1.328
+"Medicaid, no Medicare",257963,27723849.000,Mean literacy score,PIAAC via ACS,244.476,1.686,0.103,1.683
+"Medicaid, no Medicare",257963,27723849.000,"Very confident filling out medical forms, %",HINTS via ACS,59.616,1.528,0.039,1.527
+"Medicaid, no Medicare",257963,27723849.000,"Very or somewhat confident, %",HINTS via ACS,84.853,1.248,0.029,1.248
+"Medicaid, no Medicare",257963,27723849.000,"Share with no HS diploma, %",ACS,19.128,,,
+"Medicaid, no Medicare",257963,27723849.000,"Share with associate or higher, %",ACS,22.059,,,
+Private only (no public),1299268,134098827.000,"Literacy at or below Level 1 (<226), %",PIAAC via ACS,23.946,1.258,0.025,1.258
+Private only (no public),1299268,134098827.000,"Literacy below Level 3 (<276), %",PIAAC via ACS,51.700,1.296,0.034,1.296
+Private only (no public),1299268,134098827.000,Mean literacy score,PIAAC via ACS,265.326,1.742,0.048,1.741
+Private only (no public),1299268,134098827.000,"Very confident filling out medical forms, %",HINTS via ACS,67.088,1.213,0.017,1.213
+Private only (no public),1299268,134098827.000,"Very or somewhat confident, %",HINTS via ACS,90.050,0.787,0.012,0.787
+Private only (no public),1299268,134098827.000,"Share with no HS diploma, %",ACS,4.791,,,
+Private only (no public),1299268,134098827.000,"Share with associate or higher, %",ACS,55.252,,,
+Any coverage (insured),1735836,178120176.000,"Literacy at or below Level 1 (<226), %",PIAAC via ACS,26.385,1.232,0.031,1.232
+Any coverage (insured),1735836,178120176.000,"Literacy below Level 3 (<276), %",PIAAC via ACS,54.616,1.247,0.038,1.247
+Any coverage (insured),1735836,178120176.000,Mean literacy score,PIAAC via ACS,260.833,1.663,0.057,1.662
+Any coverage (insured),1735836,178120176.000,"Very confident filling out medical forms, %",HINTS via ACS,65.685,1.225,0.019,1.225
+Any coverage (insured),1735836,178120176.000,"Very or somewhat confident, %",HINTS via ACS,89.066,0.835,0.013,0.834
+Any coverage (insured),1735836,178120176.000,"Share with no HS diploma, %",ACS,7.506,,,
+Any coverage (insured),1735836,178120176.000,"Share with associate or higher, %",ACS,48.443,,,
+Uninsured,197534,22895192.000,"Literacy at or below Level 1 (<226), %",PIAAC via ACS,37.111,1.570,0.070,1.568
+Uninsured,197534,22895192.000,"Literacy below Level 3 (<276), %",PIAAC via ACS,65.609,1.411,0.065,1.410
+Uninsured,197534,22895192.000,Mean literacy score,PIAAC via ACS,242.250,1.883,0.114,1.880
+Uninsured,197534,22895192.000,"Very confident filling out medical forms, %",HINTS via ACS,56.773,1.976,0.048,1.975
+Uninsured,197534,22895192.000,"Very or somewhat confident, %",HINTS via ACS,82.483,1.435,0.039,1.435
+Uninsured,197534,22895192.000,"Share with no HS diploma, %",ACS,23.637,,,
+Uninsured,197534,22895192.000,"Share with associate or higher, %",ACS,21.179,,,
+All adults 20-65,1933370,201015368.000,"Literacy at or below Level 1 (<226), %",PIAAC via ACS,27.606,1.238,0.035,1.237
+All adults 20-65,1933370,201015368.000,"Literacy below Level 3 (<276), %",PIAAC via ACS,55.868,1.235,0.041,1.234
+All adults 20-65,1933370,201015368.000,Mean literacy score,PIAAC via ACS,258.717,1.641,0.063,1.640
+All adults 20-65,1933370,201015368.000,"Very confident filling out medical forms, %",HINTS via ACS,64.670,1.273,0.022,1.273
+All adults 20-65,1933370,201015368.000,"Very or somewhat confident, %",HINTS via ACS,88.317,0.878,0.016,0.878
+All adults 20-65,1933370,201015368.000,"Share with no HS diploma, %",ACS,9.343,,,
+All adults 20-65,1933370,201015368.000,"Share with associate or higher, %",ACS,45.337,,,

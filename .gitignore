@@ -7,16 +7,9 @@ csv_pus.zip
 psam_pus*.csv
 prgusap2*.csv
 
-# Derived cell arrays and results are added once the preregistration is posted
-analysis/acs_bridge/cells_*.npz
-analysis/acs_bridge/cells_*.csv
-analysis/acs_bridge/composition.csv
-analysis/acs_bridge/bridge_results.*
 
 __pycache__/
 *.pyc
 .DS_Store
 
-# Confirmatory outputs are added once the registered run is published
 analysis/confirmatory/synthetic_test/
-analysis/confirmatory/results/

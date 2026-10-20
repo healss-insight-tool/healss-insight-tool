@@ -13,15 +13,16 @@ Authors: Ashley Lewis (lead; [ORCID 0009-0005-0811-6221](https://orcid.org/0009-
 | Raw data archived with checksums (HINTS 7, PIAAC Cycle 2 U.S., ACS 2024 PUMS) | done |
 | Harmonization codebook (`analysis/crosswalk/`) | done |
 | Pipeline validation against published figures (`analysis/step0/`) | done |
-| OSF preregistration | submitted 2026-10-20, [osf.io/ceztj](https://osf.io/ceztj), pending contributor approval (DOI will be added here) |
-| Confirmatory analysis (education gradients, difference in gaps) | held until the registration is approved |
-| Exploratory Medicaid bridge through the ACS (`analysis/acs_bridge/`) | code here; results published after registration |
+| OSF preregistration | registered 2026-10-20: [osf.io/ceztj](https://osf.io/ceztj) |
+| Confirmatory analysis (education gradients, difference in gaps) | done 2026-10-20: [results](analysis/confirmatory/results/results.md). H1 and H2 supported, robust across all sensitivity variants |
+| Exploratory Medicaid bridge through the ACS (`analysis/acs_bridge/`) | [results](analysis/acs_bridge/bridge_results.md), disclosed pre-registration pilot |
 | Website (`site/`) | version 5 |
 
 ## What is here
 
 - `analysis/crosswalk/`: the written codebook that defines identical subgroups (education, age 20 to 65, sex, self-rated health) in both surveys, with the variable-level table.
 - `analysis/step0/`: estimation helpers (`survey_est.py`) implementing the HINTS jackknife (50 replicates, factor 0.98) and the PIAAC Fay-BRR variance (44 replicates, k = 0.3) with Rubin combination over ten plausible values, plus the script that reproduces every published HINTS 7 codebook percentage exactly and every NCES 2023 PIAAC figure within rounding.
+- `analysis/confirmatory/`: the registered analysis script and its outputs (`results/`): primary estimates, the H1 and H2 tests, five sensitivity analyses, E2 breakdowns and nonresponse tables.
 - `analysis/acs_bridge/`: indirect standardization of both measures to the education, age and sex composition of Medicaid enrollees, privately insured and uninsured adults, using the ACS 2024 1-year PUMS with its 80 successive-difference replicate weights.
 - `site/`: the single-file project website and its readability checker.
 - `data/`: how to obtain the three public-use files and the checksums of the releases used. No microdata are in this repository.
@@ -37,7 +38,11 @@ Python 3.11 or later; tested with pandas 2.x and numpy 1.26 to 2.x.
 
 ## Method in one paragraph
 
-Confidence and competence are never measured on the same person. Each quantity is estimated inside its own survey with that survey's weights and replicate variance method; the two are then compared as independent estimates for subgroups defined identically in both. The gap between the confidence share and the literacy share is an index of mismatch between two population-level measures of different constructs, not a within-person discrepancy. Hypotheses, cut-offs and sensitivity analyses are fixed in the preregistration before any gap is computed.
+Confidence and competence are never measured on the same person. Each quantity is estimated inside its own survey with that survey's weights and replicate variance method; the two are then compared as independent estimates for subgroups defined identically in both. The gap between the confidence share and the literacy share is an index of mismatch between two population-level measures of different constructs, not a within-person discrepancy. Hypotheses, cut-offs and sensitivity analyses were fixed in the preregistration before any gap was computed.
+
+## Headline result (registered analysis, adults 20 to 65)
+
+Measured literacy rises 61 points across education (share at or above PIAAC Level 2, no diploma to bachelor's or higher; 95% CI 54 to 69), but self-reported confidence rises only 30 points (CI 19 to 41). The difference in gaps is 31 points (CI 18 to 45). Among adults with no high school diploma, 46% say they are very confident filling out medical forms while 28% read at Level 2 or above. Both registered hypotheses are supported, and every pre-specified sensitivity variant agrees. Full tables: [analysis/confirmatory/results/results.md](analysis/confirmatory/results/results.md).
 
 ## Citation and licence
 
