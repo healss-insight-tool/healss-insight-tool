@@ -16,3 +16,7 @@ analysis/acs_bridge/bridge_results.*
 __pycache__/
 *.pyc
 .DS_Store
+
+# Confirmatory outputs are added once the registered run is published
+analysis/confirmatory/synthetic_test/
+analysis/confirmatory/results/
