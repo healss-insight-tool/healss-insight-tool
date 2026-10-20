@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this code or the harmonization codebook, please cite it as below."
+title: "HeaLSS Insight Tool: confidence versus competence in U.S. health literacy (HINTS 7 and PIAAC Cycle 2)"
+type: software
+version: 0.1.0
+date-released: 2026-10-20
+license: MIT
+authors:
+  - family-names: Lewis
+    given-names: Ashley
+    orcid: "https://orcid.org/0009-0005-0811-6221"
+    affiliation: Independent researcher
+  - family-names: Jones
+    given-names: Tyler L.
+    orcid: "https://orcid.org/0009-0007-5393-7584"
+    affiliation: Independent researcher
+keywords:
+  - health literacy
+  - HINTS
+  - PIAAC
+  - Medicaid
+  - survey methodology
+  - replicate weights
+abstract: >
+  Python pipeline and harmonization codebook for comparing self-reported
+  health-information confidence (HINTS 7, 2024) with directly measured adult
+  literacy (PIAAC Cycle 2, 2023) in identically defined subgroups of U.S.
+  adults aged 20 to 65, with an exploratory bridge to Medicaid enrollees
+  through the ACS 2024 PUMS.

@@ -1,0 +1,574 @@
+<title>HeaLSS Insight Tool</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a document-like page in the vernacular of forms and attestations. One sticky tab bar, a 68ch reading column, charts up to 880px. */
+:root{
+  --bg:#f4f5f3; --surface:#fcfcfb; --ink:#0f1419; --ink-2:#4f5560; --muted:#858b94; --line:#dfe2de; --rule:#c3c6c0;
+  --accent:#1c5cab; --accent-ink:#ffffff; --wash:#e9eff8;
+  --s1:#2a78d6; --s2:#eb6834; --grid:#e1e0d9; --axis:#c3c2b7;
+  --display:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f1112; --surface:#1a1a19; --ink:#eef0ec; --ink-2:#c0c4bb; --muted:#8b9089; --line:#2c2e2b; --rule:#3a3d39;
+  --accent:#5598e7; --accent-ink:#0f1112; --wash:#17202c;
+  --s1:#3987e5; --s2:#d95926; --grid:#2c2c2a; --axis:#383835; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f1112; --surface:#1a1a19; --ink:#eef0ec; --ink-2:#c0c4bb; --muted:#8b9089; --line:#2c2e2b; --rule:#3a3d39;
+  --accent:#5598e7; --accent-ink:#0f1112; --wash:#17202c;
+  --s1:#3987e5; --s2:#d95926; --grid:#2c2c2a; --axis:#383835; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;text-wrap:balance;margin:0}
+h2{font-size:1.75rem;margin-block:0 .25rem}
+h3{font-size:1.2rem;margin-block:1.6rem .5rem}
+p{margin:0 0 1rem}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.col{max-width:68ch;margin:0 auto}
+.wide{max-width:880px;margin:0 auto}
+
+/* header + tabs */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:9}
+.brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;padding-block:.9rem .2rem}
+.brand .name{font-family:var(--display);font-size:1.15rem;font-weight:500}
+.brand .pending{font-family:var(--mono);font-size:.7rem;color:var(--muted);border:1px dashed var(--rule);padding:.1rem .45rem;border-radius:3px}
+nav[role=tablist]{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;margin-left:-6px}
+nav[role=tablist]::-webkit-scrollbar{display:none}
+nav button{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-2);cursor:pointer;font:inherit;font-size:.92rem;padding:.55rem .6rem .6rem;white-space:nowrap;margin-bottom:-1px}
+nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
+nav button:hover{color:var(--ink)}
+section[role=tabpanel]{padding-block:2.2rem 3.5rem}
+section[role=tabpanel][hidden]{display:none}
+
+/* hero */
+.attest{font-family:var(--mono);font-size:.95rem;color:var(--ink-2);border:1px solid var(--rule);background:var(--surface);padding:.9rem 1.1rem;margin:0 0 1.4rem;display:grid;grid-template-columns:auto 1fr;gap:.6rem 1rem;align-items:center}
+.attest .box{width:18px;height:18px;border:1.5px solid var(--ink-2);display:inline-block;position:relative}
+.attest .box::after{content:"";position:absolute;left:4px;top:-2px;width:7px;height:13px;border:solid var(--ink);border-width:0 2px 2px 0;transform:rotate(40deg)}
+.attest .sig{grid-column:1/-1;border-top:1px solid var(--rule);padding-top:.5rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+h1{font-size:clamp(1.9rem,4.2vw,2.8rem);margin-bottom:.8rem}
+.lede{font-size:1.15rem;color:var(--ink-2);max-width:60ch}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-block:1.6rem}
+.fact{background:var(--surface);border:1px solid var(--line);padding:1rem 1.1rem;min-width:0}
+.fact .lab{font-size:.85rem;color:var(--ink-2)}
+.fact .val{font-size:2.6rem;font-weight:600;line-height:1.1;margin:.2rem 0 .1rem;display:flex;align-items:baseline;gap:.5rem}
+.fact .val small{font-size:.85rem;font-weight:400;color:var(--muted);font-family:var(--mono)}
+.fact .src{font-size:.78rem;color:var(--muted)}
+.key{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.35rem;vertical-align:-1px}
+.k1{background:var(--s1)}.k2{background:var(--s2)}
+.note{border-left:3px solid var(--accent);padding:.6rem 1rem;background:var(--wash);margin:1.2rem 0;font-size:.95rem}
+.note p:last-child{margin:0}
+
+/* figures */
+figure{margin:1.6rem 0 2rem;background:var(--surface);border:1px solid var(--line);padding:1rem 1rem 0.6rem;min-width:0}
+figure .ftitle{font-weight:500;font-size:1.02rem;margin:0 0 .15rem}
+figure .fsub{color:var(--ink-2);font-size:.88rem;margin:0 0 .6rem}
+figure .chart{overflow-x:auto;padding-bottom:4px}
+figure svg{width:100%;min-width:540px;height:auto;display:block;overflow:visible;font-family:var(--body)}
+#fig-verify table{min-width:640px}
+#fig-verify td,#fig-verify th{white-space:nowrap}
+figure .legend{display:flex;gap:1.1rem;flex-wrap:wrap;font-size:.82rem;color:var(--ink-2);margin:.2rem 0 .5rem}
+figcaption{font-size:.8rem;color:var(--muted);margin-top:.4rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center}
+figcaption button{appearance:none;background:none;border:1px solid var(--rule);border-radius:3px;color:var(--ink-2);cursor:pointer;font:inherit;font-size:.78rem;padding:.2rem .55rem}
+.dtable{overflow-x:auto;margin:.5rem 0 .4rem}
+.dtable[hidden]{display:none}
+table{border-collapse:collapse;width:100%;font-size:.85rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:.35rem .5rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--ink-2);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+td.n,th.n{text-align:right}
+.tip{position:fixed;z-index:20;pointer-events:none;background:var(--ink);color:var(--bg);padding:.4rem .6rem;border-radius:4px;font-size:.8rem;line-height:1.35;max-width:260px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.tip[hidden]{display:none}
+.tip b{font-size:.95rem}
+svg .grid{stroke:var(--grid);stroke-width:1}
+svg .axis{stroke:var(--axis);stroke-width:1}
+svg .lab{fill:var(--ink-2);font-size:12px}
+svg .lab2{fill:var(--muted);font-size:11px;font-family:var(--mono)}
+svg .val{fill:var(--ink);font-size:12px;font-weight:500}
+svg .ci{stroke-width:2;stroke-linecap:round}
+svg .dot{stroke:var(--surface);stroke-width:2}
+svg .hit{fill:transparent}
+svg .hit:hover+g .dot, svg g:focus .dot{stroke:var(--ink)}
+svg .pub{fill:none;stroke:var(--ink);stroke-width:2}
+.tabular{font-variant-numeric:tabular-nums}
+
+/* prose blocks */
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:1rem 0 1.5rem}
+.defs div{background:var(--surface);border:1px solid var(--line);padding:.9rem 1rem;min-width:0}
+.defs .eyebrow{display:block;margin-bottom:.3rem}
+ol.steps{padding-left:1.3rem;margin:0 0 1rem}
+ol.steps li{margin-bottom:.5rem}
+ul.plain{padding-left:1.2rem;margin:0 0 1rem}
+ul.plain li{margin-bottom:.4rem}
+.ref{margin:0 0 .9rem;padding-left:1.2rem;text-indent:-1.2rem;font-size:.95rem}
+.ref .where{color:var(--muted);font-size:.85rem}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1rem 0 1.5rem}
+.team .card{background:var(--surface);border:1px solid var(--line);padding:1rem 1.1rem;min-width:0}
+.team .card h3{margin-top:0}
+.team .roles{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);line-height:1.5}
+.timeline{list-style:none;padding:0;margin:1rem 0 1.5rem;display:grid;gap:.5rem}
+.timeline li{display:grid;grid-template-columns:7.5rem 1fr;gap:.8rem;align-items:start;padding:.55rem .2rem;border-bottom:1px solid var(--line)}
+.timeline .ph{font-family:var(--mono);font-size:.78rem;color:var(--muted);padding-top:.15rem}
+.pill{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;padding:.08rem .45rem;border-radius:3px;margin-left:.4rem;vertical-align:1px}
+.done{background:#dcefdc;color:#114d11}.todo{background:var(--wash);color:var(--accent)}.gate{background:#fbe9d2;color:#6b3a00}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .done{background:#143d14;color:#bfe6bf} :root:not([data-theme="light"]) .gate{background:#4a2d08;color:#f3cf9a} }
+:root[data-theme="dark"] .done{background:#143d14;color:#bfe6bf} :root[data-theme="dark"] .gate{background:#4a2d08;color:#f3cf9a}
+.check{list-style:none;padding:0;margin:0 0 1.2rem}
+.check li{padding:.3rem 0 .3rem 1.6rem;position:relative;border-bottom:1px solid var(--line)}
+.check li::before{content:"";position:absolute;left:.1rem;top:.55rem;width:12px;height:12px;border:1.5px solid var(--rule)}
+.check li.is-done::before{border-color:var(--accent);background:var(--accent)}
+.check li.is-done::after{content:"";position:absolute;left:.38rem;top:.6rem;width:4px;height:8px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:rotate(40deg)}
+pre{background:var(--surface);border:1px solid var(--line);padding:.8rem 1rem;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.5;margin:0 0 1rem;color:var(--ink)}
+code{font-family:var(--mono);font-size:.88em}
+.formula{font-family:var(--mono);font-size:.9rem;background:var(--surface);border:1px solid var(--line);padding:.6rem .9rem;margin:.4rem 0 1rem;overflow-x:auto;white-space:nowrap}
+.hash{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);word-break:break-all}
+footer{border-top:1px solid var(--line);padding-block:1.2rem 2rem;font-size:.82rem;color:var(--muted)}
+@media (max-width:520px){ .timeline li{grid-template-columns:1fr} .attest{grid-template-columns:auto 1fr} }
+@media (prefers-reduced-motion:no-preference){ nav button{transition:color .15s,border-color .15s} }
+</style>
+
+<header class="top"><div class="wrap"><div class="wide">
+  <div class="brand"><span class="name">HeaLSS Insight Tool</span><span class="pending">Health Literacy Skilling and Scaling · a data tool on confidence and competence</span></div>
+  <nav role="tablist" aria-label="Sections">
+    <button role="tab" id="tab-overview" aria-controls="overview" aria-selected="true">Overview</button>
+    <button role="tab" id="tab-findings" aria-controls="findings" aria-selected="false">First figures</button>
+    <button role="tab" id="tab-design" aria-controls="design" aria-selected="false">Design</button>
+    <button role="tab" id="tab-methods" aria-controls="methods" aria-selected="false">Methods</button>
+    <button role="tab" id="tab-evidence" aria-controls="evidence" aria-selected="false">Evidence</button>
+    <button role="tab" id="tab-team" aria-controls="team" aria-selected="false">Team</button>
+    <button role="tab" id="tab-roadmap" aria-controls="roadmap" aria-selected="false">Roadmap</button>
+  </nav>
+</div></div></header>
+
+<main class="wrap">
+
+<!-- ============ OVERVIEW ============ -->
+<section role="tabpanel" id="overview" aria-labelledby="tab-overview"><div class="col">
+  <div class="attest" aria-hidden="true">
+    <span class="box"></span><span>I have read and understood the information above.</span>
+    <div class="sig"><span>Signature ______________________</span><span>Date ____ / ____ / ______</span></div>
+  </div>
+  <p class="eyebrow">Measured literacy × self-reported confidence · U.S. adults</p>
+  <h1>Who feels sure they can read what they sign, and who, as a group, likely cannot?</h1>
+  <p class="lede">This project places two free national surveys side by side. One tests how well adults actually read. The other asks how confident they feel handling health information. The distance between the two, for the same policy-relevant groups, is the finding.</p>
+
+  <div class="two">
+    <div class="fact"><div class="lab"><span class="key k1"></span>Adults 16–65 at or below Level 1 literacy</div><div class="val">28<span style="font-size:1.3rem;font-weight:500">%</span><small>±2.0</small></div><div class="src">PIAAC Cycle 2, 2023 · measured by test · reproduced here as 27.6%, 95% CI 25.6–29.6</div></div>
+    <div class="fact"><div class="lab"><span class="key k2"></span>Adults 18+ “very confident” filling out medical forms alone</div><div class="val">65<span style="font-size:1.3rem;font-weight:500">%</span><small>±1.9</small></div><div class="src">HINTS 7, 2024 · self-report · 65.3%, 95% CI 63.4–67.2</div></div>
+  </div>
+  <div class="note"><p>These are two population estimates from two independent samples, never the same people. The study compares groups to groups and never claims that any individual cannot read.</p></div>
+
+  <h3>Why it matters</h3>
+  <p>Medicaid signature pages read at an 11th to 18th grade level, with a mean near 15.5. Ninety-two percent of state renewal forms are written at or above a fifth-grade level, and in seven states a child's risk of losing coverage rose about 47% for each grade level added to the form. Research consent forms are no better: 91% of 5,239 forms on ClinicalTrials.gov sit above an eighth-grade level. Meanwhile the field increasingly measures health literacy by asking people how confident they feel rather than testing what they can do.</p>
+  <p>Where confidence runs far ahead of measured skill, three things follow. “I have read and understood” attestations may not reflect understanding. Coverage is lost for paperwork reasons rather than ineligibility, which is measurable administrative waste. And confident readers with low measured skill may be less likely to question official-looking mail, which is where scam warnings need to land.</p>
+
+  <h3>What the project does</h3>
+  <ol class="steps">
+    <li><strong>Competence.</strong> From PIAAC, the share of each subgroup at or below Level 1 literacy and at Level 3 or above.</li>
+    <li><strong>Confidence.</strong> From HINTS, the share of the same subgroups reporting high confidence filling out medical forms.</li>
+    <li><strong>The gap.</strong> Confidence minus competence, in percentage points, with a confidence interval, for each subgroup.</li>
+    <li><strong>Channels.</strong> Where the highest-gap groups get health information and whom they trust, so notices and warnings reach them.</li>
+  </ol>
+  <p>No new data are collected. Both files are public and de-identified. The analysis is preregistered before any outcome data are examined, and every figure is regenerated from the official downloads by script.</p>
+</div></section>
+
+<!-- ============ FIRST FIGURES ============ -->
+<section role="tabpanel" id="findings" aria-labelledby="tab-findings" hidden><div class="wide">
+  <div class="col" style="margin-left:0">
+  <p class="eyebrow">Step 0 · pipeline validation · October 2026</p>
+  <h2>The first figures are the published ones, reproduced</h2>
+  <p>Before any subgroup analysis, the pipeline has to reproduce what the agencies already publish, using each survey's official weights and variance method. It does. Every HINTS 7 codebook percentage tested reproduces exactly; every NCES 2023 PIAAC figure tested reproduces within rounding. The charts below are those reproductions with the uncertainty the published tables leave out. No outcome comparison appears here until the preregistration is posted.</p>
+  </div>
+
+  <figure id="fig-levels">
+    <div class="ftitle">Measured literacy, U.S. adults 16–65</div>
+    <div class="fsub">Percent of adults at each PIAAC proficiency level, with 95% confidence intervals. PIAAC Cycle 2 (2023), 10 plausible values, 44 Fay-BRR replicates.</div>
+    <div class="chart"></div>
+    <div class="dtable" hidden></div>
+    <figcaption><span>Score ranges in the row labels are the OECD cut-offs on the 0–500 scale.</span><button type="button" class="toggle" aria-expanded="false">Show data</button></figcaption>
+  </figure>
+
+  <figure id="fig-edu">
+    <div class="ftitle">At or below Level 1 literacy, by educational attainment</div>
+    <div class="fsub">Reproduced estimate with 95% CI, and the figure NCES published, U.S. adults 16–65.</div>
+    <div class="legend"><span><span class="key k1"></span>Reproduced (dot and interval)</span><span><span style="display:inline-block;width:2px;height:12px;background:var(--ink);vertical-align:-2px;margin-right:.4rem"></span>Published by NCES</span></div>
+    <div class="chart"></div>
+    <div class="dtable" hidden></div>
+    <figcaption><span>NCES groups ISCED 3 and 4 as “high school” and ISCED 5 and above as “more than high school.”</span><button type="button" class="toggle" aria-expanded="false">Show data</button></figcaption>
+  </figure>
+
+  <figure id="fig-forms">
+    <div class="ftitle">“How confident are you filling out medical forms by yourself?”</div>
+    <div class="fsub">Percent of U.S. adults 18 and older, with 95% confidence intervals. HINTS 7 (2024), item C10, 7,114 valid answers, 50 jackknife replicates.</div>
+    <div class="chart"></div>
+    <div class="dtable" hidden></div>
+    <figcaption><span>This single validated item is the study's primary confidence measure.</span><button type="button" class="toggle" aria-expanded="false">Show data</button></figcaption>
+  </figure>
+
+  <figure id="fig-health">
+    <div class="ftitle">Same question, two surveys: “In general, would you say your health is…”</div>
+    <div class="fsub">A non-outcome item both surveys ask on the same five-point scale, shown the way every subgroup comparison will be shown.</div>
+    <div class="legend"><span><span class="key k1"></span>PIAAC 2023, adults 16–65</span><span><span class="key k2"></span>HINTS 7 2024, adults 18+</span></div>
+    <div class="chart"></div>
+    <div class="dtable" hidden></div>
+    <figcaption><span>The age ranges differ here; the study's primary analysis aligns both surveys to ages 20–65.</span><button type="button" class="toggle" aria-expanded="false">Show data</button></figcaption>
+  </figure>
+
+  <figure id="fig-verify">
+    <div class="ftitle">Verification table: reproduced versus published</div>
+    <div class="fsub">Every published figure tested, the pipeline's estimate, its standard error, and the difference.</div>
+    <div class="dtable"></div>
+    <figcaption><span>Published sources: HINTS 7 Public Codebook (weighted percent, all respondents including missing codes) and NCES, Highlights of the 2023 U.S. PIAAC Results. Neither publishes standard errors.</span></figcaption>
+  </figure>
+</div></section>
+
+<!-- ============ DESIGN ============ -->
+<section role="tabpanel" id="design" aria-labelledby="tab-design" hidden><div class="col">
+  <p class="eyebrow">Study design</p>
+  <h2>Two surveys, one gap</h2>
+  <p>Each quantity is estimated inside its own survey, for identically defined subgroups, and the results are compared side by side. The surveys are never linked at the individual level. The unit of comparison is the subgroup, never the person.</p>
+
+  <div class="defs">
+    <div><span class="eyebrow">Competence · PIAAC Cycle 2 (2023)</span>Directly measured literacy on a 0–500 scale, reported as ten plausible values per person. Primary threshold: at or below Level 1 (score below 226). Sensitivity: below Level 3 (below 276). Sample: 3,765 U.S. adults 16–65.</div>
+    <div><span class="eyebrow">Confidence · HINTS 7 (2024)</span>“How confident are you filling out medical forms by yourself?” High confidence = “Very.” Secondary item: “I have the skills to find the health information I need.” Sample: 7,278 U.S. adults 18 and older.</div>
+  </div>
+
+  <h3>Research questions</h3>
+  <ol class="steps">
+    <li>What share of each subgroup scores at or below Level 1 and at Level 3 or above?</li>
+    <li>What share of the same subgroups reports high confidence handling health information?</li>
+    <li>For which subgroups does confidence most exceed measured competence?</li>
+    <li>Among the highest-gap groups, which information sources do people use and trust? (exploratory)</li>
+  </ol>
+
+  <h3>Hypotheses</h3>
+  <ul class="plain">
+    <li><strong>H1.</strong> Adults without a high school diploma, as a group, score lower on measured literacy than adults with more education. <span class="where">(Version 1 uses education as the primary axis; the Medicaid comparison originally planned here waits for restricted data, see below.)</span></li>
+    <li><strong>H2.</strong> Self-reported confidence varies less across subgroups than measured literacy does, so the gap is widest among adults without a high school diploma.</li>
+    <li><strong>H2-alt.</strong> Because more-educated people overestimate their health literacy more often, the gap may also be substantial among higher-education groups. Both are stated so either result is publishable.</li>
+  </ul>
+
+  <h3>Harmonized subgroups</h3>
+  <p>Both files were checked variable by variable. These are the definitions that cross cleanly.</p>
+  <div class="dtable"><table>
+    <thead><tr><th>Construct</th><th>HINTS 7</th><th>PIAAC Cycle 2</th><th>Shared definition</th></tr></thead>
+    <tbody>
+      <tr><td>Education</td><td>EducA (4 levels)</td><td>EDCAT8_TC1 (ISCED 97)</td><td>Less than high school · High school graduate · Some college or post-HS training · Bachelor's or higher</td></tr>
+      <tr><td>Age</td><td>Exact age, 18–102</td><td>Five-year bands, 16–65</td><td>Ages 20–65 in both; bands 20–24, 25–34, 35–44, 45–54, 55–65</td></tr>
+      <tr><td>Sex</td><td>Sex assigned at birth</td><td>Gender</td><td>Female · Male</td></tr>
+      <tr><td>Self-rated health</td><td>Excellent to Poor</td><td>Excellent to Poor</td><td>Same five labels; collapsed to Good or better vs Fair or Poor</td></tr>
+    </tbody></table></div>
+  <p>Insurance type is the one construct that does not cross: HINTS 7 asks only whether a person has any coverage, and the public PIAAC file has no insurance item at all. Insured versus uninsured, household income, race and ethnicity, and disability are therefore described within HINTS only.</p>
+
+  <h3>Estimation</h3>
+  <p>Every estimate uses its own survey's official weights and variance method: 50 jackknife replicates for HINTS, 44 Fay-adjusted BRR replicates combined across 10 plausible values for PIAAC. The gap for a subgroup is confidence minus competence; because the samples are independent, its variance is the sum of the two. Ninety-five percent confidence intervals throughout. Sensitivity analyses: the Level 3 threshold, the secondary confidence item, the strictest common age range, and HINTS response mode (paper versus web).</p>
+
+  <h3>Guardrails</h3>
+  <ul class="plain">
+    <li>Write “adults without a diploma, as a group, score X in PIAAC and report Y in HINTS,” never claims about the same people.</li>
+    <li>No translation of PIAAC levels into school grade levels without a published, justified crosswalk.</li>
+    <li>The study does not measure fraud. Fraud, waste and abuse claims describe vulnerability pathways and administrative waste.</li>
+    <li>No claim that low literacy causes fraud or raises medical costs; the evidence on both is mixed.</li>
+    <li>Statistical matching across surveys is out of scope for version 1.</li>
+  </ul>
+</div></section>
+
+<!-- ============ METHODS ============ -->
+<section role="tabpanel" id="methods" aria-labelledby="tab-methods" hidden><div class="col">
+  <p class="eyebrow">Methods · exactly what the code does</p>
+  <h2>Every number on this site can be rebuilt from the official downloads</h2>
+  <p>The estimation code is short on purpose. It follows each survey's own documentation for weights and variance, and it reproduced every published figure it was tested against before any new figure was computed.</p>
+
+  <h3>Data provenance</h3>
+  <p>Both public files were downloaded from the agencies, archived privately with SHA-256 checksums, and never redistributed. The originals are untouched; analysis reads from them directly.</p>
+  <div class="dtable"><table>
+    <thead><tr><th>File</th><th>What it is</th><th>SHA-256 (first 16)</th></tr></thead>
+    <tbody>
+      <tr><td>HINTS7_STATA_20250731.zip</td><td>HINTS 7 Stata release: data, codebook, methodology report (7,278 × 470)</td><td class="hash">1631fcc0306d32c6</td></tr>
+      <tr><td>prgusap2_sav.zip</td><td>OECD PIAAC Cycle 2 U.S. public-use file, SPSS (3,765 × 2,483)</td><td class="hash">6ea8ed92be1f2e67</td></tr>
+      <tr><td>piaac-cy2-international-codebook.xlsx</td><td>OECD Cycle 2 international codebook</td><td class="hash">in SHA256SUMS</td></tr>
+    </tbody></table></div>
+
+  <h3>Weights and variance</h3>
+  <p><strong>HINTS 7.</strong> Point estimates use the full-sample weight <code>PERSON_FINWT0</code>. Variance uses the 50 jackknife replicate weights <code>PERSON_FINWT1–50</code> with the coefficient NCI specifies (0.98, which is 49/50):</p>
+  <div class="formula">V(θ̂) = 0.98 · Σ<sub>r=1..50</sub> (θ̂<sub>r</sub> − θ̂)²</div>
+  <p><strong>PIAAC Cycle 2, U.S.</strong> Point estimates use <code>SPFWT0</code>. The U.S. file uses Fay-adjusted balanced repeated replication with 44 replicates (<code>SPFWT1–44</code>) and Fay's factor k = 0.3. Columns 45 to 80 are copies of the full-sample weight and are excluded.</p>
+  <div class="formula">V<sub>rep</sub>(θ̂) = Σ<sub>r=1..44</sub> (θ̂<sub>r</sub> − θ̂)² / (44 · (1 − 0.3)²)</div>
+  <p>Literacy is reported as ten plausible values per person. Each statistic is computed once per plausible value and combined with Rubin's rules, where Ū is the mean replicate variance and B the variance of the ten point estimates:</p>
+  <div class="formula">θ̂ = mean(θ̂<sub>m</sub>) &nbsp;&nbsp; V = Ū + (1 + 1/10) · B</div>
+  <p><strong>Proficiency levels</strong> (OECD 2023 Data Analysis Manual, Table 5.2): below Level 1 &lt; 176 · Level 1 176–225 · Level 2 226–275 · Level 3 276–325 · Level 4 326–375 · Level 5 ≥ 376. "At or below Level 1" means a score below 226.</p>
+  <p><strong>The gap.</strong> For subgroup g, confidence minus competence in percentage points. The samples are independent, so the variances add:</p>
+  <div class="formula">Gap<sub>g</sub> = C<sub>g</sub> − P<sub>g</sub> &nbsp;&nbsp; SE(Gap<sub>g</sub>) = √(V(C<sub>g</sub>) + V(P<sub>g</sub>))</div>
+  <p>All intervals on this site are 95% intervals, estimate ± 1.96 × SE.</p>
+
+  <h3>Reproduce a figure</h3>
+  <p>With the archived files in place, Step 0 regenerates its whole comparison table in one command. The same module serves every later chart.</p>
+<pre>cd analysis/step0
+python3 step0_reproduce.py        # writes step0_results.csv and step0_results.md</pre>
+  <p>The literacy-levels chart, for example, is five calls to one function:</p>
+<pre>import survey_est as se
+p, meta = se.load_piaac()
+below_L1 = se.piaac_estimate(p, "LIT", "prop", hi=226)     # {'est': 27.6, 'se': 1.03, 'n': 3765}
+level_2  = se.piaac_estimate(p, "LIT", "prop", lo=226, hi=276)
+
+h, meta = se.load_hints()
+valid = h["ConfidentMedForms"] > 0
+very  = se.hints_estimate(h, h["ConfidentMedForms"] == 1, valid)  # {'est': 65.3, 'se': 0.97, 'n': 7114}</pre>
+
+  <h3>Readability of this site</h3>
+  <p>A project about readability should measure its own. Each tab's prose was scored with Flesch Reading Ease and the Flesch–Kincaid grade level (rule-based syllable count; figures, tables and citations excluded). The target for the Overview is an eighth-grade level, the same benchmark the consent-form and Medicaid-form studies use. It is not there yet, and that is on the roadmap.</p>
+  <div class="dtable"><table class="tabular">
+    <thead><tr><th>Tab</th><th class="n">Words</th><th class="n">Words per sentence</th><th class="n">Reading ease</th><th class="n">Grade level</th></tr></thead>
+    <tbody>
+      <tr><td>Overview</td><td class="n">378</td><td class="n">13.5</td><td class="n">53</td><td class="n">9.2</td></tr>
+      <tr><td>First figures</td><td class="n">78</td><td class="n">15.6</td><td class="n">25</td><td class="n">13.6</td></tr>
+      <tr><td>Design</td><td class="n">473</td><td class="n">13.5</td><td class="n">45</td><td class="n">10.3</td></tr>
+      <tr><td>Evidence</td><td class="n">410</td><td class="n">10.0</td><td class="n">26</td><td class="n">12.2</td></tr>
+      <tr><td>Team</td><td class="n">183</td><td class="n">16.6</td><td class="n">8</td><td class="n">16.3</td></tr>
+      <tr><td>Roadmap</td><td class="n">325</td><td class="n">17.1</td><td class="n">26</td><td class="n">14.0</td></tr>
+      <tr><td><strong>Whole site</strong></td><td class="n">1,847</td><td class="n">13.3</td><td class="n">35</td><td class="n">11.7</td></tr>
+    </tbody></table></div>
+  <p class="where" style="font-size:.85rem;color:var(--muted)">Scored 18 October 2026 with <code>site/readability.py</code>. Reading ease runs 0–100, higher is easier; 60–70 is plain English for most adults.</p>
+</div></section>
+
+<!-- ============ EVIDENCE ============ -->
+<section role="tabpanel" id="evidence" aria-labelledby="tab-evidence" hidden><div class="col">
+  <p class="eyebrow">Evidence base</p>
+  <h2>What the project builds on</h2>
+  <p>Peer-reviewed studies and official documentation behind each claim on this site. Items reviewed from abstracts or summaries are pulled and read in full before being cited in the manuscript.</p>
+
+  <h3>Confidence is replacing competence in measurement</h3>
+  <p class="ref">Jagemann, Thiele, von Brachel &amp; Hirschfeld (2025). Substituting confidence for competence in health literacy. <em>Health Promotion International</em> 40(1). <a href="https://www.hsbi.de/publikationsserver/record/5590">Record</a> · <a href="https://zenodo.org/record/13285272">Dataset</a> <span class="where">Of 55 health literacy measures, 23 test performance, 28 rely on self-ratings, 4 do both.</span></p>
+  <p class="ref">Sarkar et al. (2011). Validation of self-reported health literacy questions among diverse English and Spanish-speaking populations. <em>Journal of General Internal Medicine</em>. <a href="https://escholarship.org/uc/item/11b8t5vv">eScholarship</a> <span class="where">Validates the single “confident filling out medical forms” item used here.</span></p>
+  <p class="ref">General practitioners and patient self-reported health literacy. <em>BMJ Open</em> 9(9). <a href="https://bmjopen.bmj.com/content/bmjopen/9/9/e029357.draft-revisions.pdf">Article</a> <span class="where">Patients with more education were more likely to overestimate their health literacy.</span></p>
+  <p class="ref">Different measures, different outcomes? A systematic review of performance-based versus self-reported measures of health literacy and numeracy (2015). <em>Journal of General Internal Medicine</em> 30(10). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4579206">PMC</a> <span class="where">The objection reviewers will raise, stated plainly.</span></p>
+  <p class="ref">Schulz et al. (2022). The right pick: does a self-assessment measurement tool correctly identify health care consumers with inadequate health literacy? <em>Patient Education and Counseling</em> 105(4). <a href="https://pure.ewha.ac.kr/en/publications/the-right-pick-does-a-self-assessment-measurement-tool-correctly-/">Record</a></p>
+
+  <h3>Documents demand more than many adults can read</h3>
+  <p class="ref">Wilson, Wallace &amp; DeVoe. Are state Medicaid application enrollment forms readable? <a href="https://ohsu.elsevierpure.com/en/publications/are-state-medicaid-application-enrollment-forms-readable-2">OHSU record</a> <span class="where">Signature pages read at 11th to 18th grade; 66% used fonts smaller than 12 point.</span></p>
+  <p class="ref">Pati et al. Medicaid renewal form readability and disenrollment. <a href="https://www.healio.com/news/pediatrics/20120331/simplifying-medicaid-renewal-forms-may-decrease-coverage-gaps-in-children-s-health-insurance">Healio summary</a> <span class="where">Known here through a news summary; the original is being located.</span></p>
+  <p class="ref">Readability of state-sponsored advance directive forms. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2868033/">PMC</a></p>
+  <p class="ref">Readability of 5,239 ClinicalTrials.gov consent forms (2024). <em>Journal of Clinical and Translational Science</em>. <a href="https://doaj.org/article/5fa3dc8abeb941b7bd3591a87080896a">DOAJ</a></p>
+
+  <h3>Literacy, Medicaid, cost and fraud: real but mixed</h3>
+  <p class="ref">Lee et al. (2014). Caregivers' health literacy and gaps in children's Medicaid enrollment. <em>PLOS ONE</em>. <a href="https://doaj.org/article/feb4af68bb304e719ddf7073cc7ab6bf">DOAJ</a></p>
+  <p class="ref">Weiss et al. (1994). Illiteracy among Medicaid recipients and its relationship to health care costs. <a href="https://experts.arizona.edu/en/publications/illiteracy-among-medicaid-recipients-and-its-relationship-to-heal/">Record</a> <span class="where">No significant relationship between literacy and costs.</span></p>
+  <p class="ref">Correlates of scam susceptibility in older adults (Rush cohort). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3916958/">PMC</a> · <a href="https://www.napsa-now.org/wp-content/uploads/2025/01/R2P-Brief-11.20.24.pdf">Government impersonation scam brief</a></p>
+  <p class="ref">Financial literacy and fraud among older adults in China. <a href="https://ifp.nyu.edu/?p=1641359">NYU IFP</a> · Fraud in the Health and Retirement Study. <a href="https://www.tiaa.org/public/institute/publication/2018/exploring-prevalence-risk-factors-and-financial-consequences-fraud">TIAA Institute</a> <span class="where">Counter-evidence the study takes seriously.</span></p>
+
+  <h3>Data and methods</h3>
+  <p class="ref">HINTS 7 (2024): <a href="https://hints.cancer.gov/">hints.cancer.gov</a> · <a href="https://hints.cancer.gov/data/methodology-reports.aspx">Methodology reports</a> · HINTS 7 analysis in Python with 50 jackknife replicates, <a href="https://www.medrxiv.org/content/10.64898/2026.06.06.26355057.full.pdf">medRxiv 2026</a></p>
+  <p class="ref">PIAAC Cycle 2 (2023): <a href="https://nces.ed.gov/surveys/piaac/2023/national_results.asp">NCES national results</a> · <a href="https://nces.ed.gov/surveys/piaac/2023/technical_notes.asp">Technical notes</a> · <a href="https://www.oecd.org/content/dam/oecd/en/about/programmes/edu/piaac/data-materials/cycle-2/piaac-cy2-codebook-and-sql-codes-for-derived-variables.pdf">OECD derived-variables codebook</a> · <a href="https://www.gesis.org/en/data-on-adult-education/workshops/analyzing-2023-piaac-data-using-r-package-edsurvey">GESIS EdSurvey workshop</a></p>
+  <p class="ref">Ethics: secondary analysis of public data and IRB review. <a href="https://sph.cuny.edu/wp-content/uploads/2021/09/Guidance-on-HRPPIRB-Review-of-Studies-Involving-Secondary-Data-Analysis_v2.pdf">CUNY SPH guidance</a> · <a href="https://www.hrpo.pitt.edu/node/910">Pitt HRPO, Exemption 4</a></p>
+  <p class="ref">Reporting standards the project follows: Preferred Reporting Items for Complex Sample Survey Analysis (PRICSSA, 2023); CRediT contributor roles; preregistration on OSF before outcome data are examined.</p>
+</div></section>
+
+<!-- ============ TEAM ============ -->
+<section role="tabpanel" id="team" aria-labelledby="tab-team" hidden><div class="col">
+  <p class="eyebrow">Team</p>
+  <h2>Two authors, explicit credit from day one</h2>
+  <p>Roles follow the CRediT contributor taxonomy so that authorship credit is settled before the first result. Both authors hold ORCID iDs, so every DOI the project produces links back to them.</p>
+  <div class="team">
+    <div class="card"><h3>Ashley Lewis, MBA</h3><p class="eyebrow" style="margin:.2rem 0 .6rem">Doctoral Candidate</p><p>Project lead and first author. Medical anthropology, sociology and medical humanities (IUPUI); healthcare administration with a payer-operations focus; MBA; DBA candidate, Indiana Wesleyan University. CITI certified in human subjects research. Acknowledged in Nelson, Stupiansky &amp; Ott (2016), <em>JERHRE</em> 11(2), an IU School of Medicine study of adolescent capacity to consent.</p><div class="roles">Conceptualization · Methodology · Investigation · Writing (original draft) · Project administration</div></div>
+    <div class="card"><h3>Dr. Tyler L. Jones</h3><p>Owns the data pipeline, software and statistical computing. Cybersecurity researcher working in digital forensics and incident response and artificial intelligence, bringing evidence-handling discipline to the data: archived originals, checksums, and every figure regenerated from the official downloads by script.</p><div class="roles">Software · Data curation · Formal analysis · Visualization · Writing (review and editing)</div></div>
+  </div>
+  <p>A survey statistician or health-services researcher is being sought as an optional methods reviewer, and would become essential if the project later attempts statistical matching between the surveys.</p>
+</div></section>
+
+<!-- ============ ROADMAP ============ -->
+<section role="tabpanel" id="roadmap" aria-labelledby="tab-roadmap" hidden><div class="col">
+  <p class="eyebrow">Roadmap · about 16 weeks from setup to submission</p>
+  <h2>Six phases, two gates</h2>
+  <p>The crosswalk gate decided feasibility of the headline comparison. The preregistration gate is what makes the results credible to reviewers.</p>
+  <ul class="timeline">
+    <li><span class="ph">Phase 1</span><span>Setup: ORCID iDs, data downloaded and archived with checksums, IRB determination request. <span class="pill done">done, except IRB letter</span></span></li>
+    <li><span class="ph">Gate 1</span><span>Variable crosswalk and the Medicaid gate. <span class="pill gate">gate failed on both files</span> Neither public file separates Medicaid enrollees, so version 1 uses education as its primary axis and the Medicaid comparison moves to phase 2.</span></li>
+    <li><span class="ph">Phase 2</span><span>Step 0: reproduce published national figures. <span class="pill done">done</span></span></li>
+    <li><span class="ph">Gate 2</span><span>Preregistration on OSF: questions, hypotheses, thresholds, analysis plan. <span class="pill todo">next</span></span></li>
+    <li><span class="ph">Phase 3</span><span>Steps 1–3: competence, confidence and gap estimates for every harmonized subgroup; Step 4 channels. <span class="pill todo">after preregistration</span></span></li>
+    <li><span class="ph">Phase 4</span><span>Harmonization codebook and code archived with DOIs; preprint; journal submission. <span class="pill todo">planned</span></span></li>
+  </ul>
+
+  <h3>Checklist</h3>
+  <ul class="check">
+    <li class="is-done">Design selected: side-by-side subgroup comparison</li>
+    <li class="is-done">ORCID iDs created for both authors</li>
+    <li class="is-done">HINTS 7 and PIAAC Cycle 2 public files and codebooks archived privately with checksums</li>
+    <li class="is-done">Variable crosswalk completed; Medicaid gate applied</li>
+    <li class="is-done">Pipeline language chosen: Python</li>
+    <li class="is-done">Step 0: published national figures reproduced</li>
+    <li>Project name chosen: HeaLSS Insight Tool (2026-10-20). Domain registration pending</li>
+    <li>“Not human subjects research” determination requested from IWU's IRB</li>
+    <li>Preregistration drafted and posted on OSF</li>
+    <li>Optional: survey statistician invited as methods reviewer</li>
+  </ul>
+
+  <h3>Decisions log</h3>
+  <ul class="timeline">
+    <li><span class="ph">2026-10-18</span><span>Framing: findings speak to informed-consent ethics, Medicaid policy, and fraud, waste and abuse.</span></li>
+    <li><span class="ph">2026-10-18</span><span>Focus: the confidence–competence gap is the core finding. Design: side-by-side comparison; statistical matching deferred.</span></li>
+    <li><span class="ph">2026-10-18</span><span>Data: HINTS 7 and the OECD PIAAC Cycle 2 U.S. public file. The NCES U.S. national file remains unreleased.</span></li>
+    <li><span class="ph">2026-10-18</span><span>Name deferred after collision checks ruled out IConSEnT, SURE, CALIBRATE and LEGIBLE.</span></li>
+    <li><span class="ph">2026-10-18</span><span>Version 1 runs on education as the primary subgroup axis; the Medicaid comparison waits for restricted data (NCES restricted-use license or the OECD Remote Code Execution Service).</span></li>
+  </ul>
+
+  <h3>Outputs that get a DOI</h3>
+  <ul class="plain">
+    <li>Preregistration (OSF), before outcome data are examined</li>
+    <li>Harmonization codebook and variable crosswalk (Zenodo)</li>
+    <li>Analysis code, archived from a public repository (Zenodo)</li>
+    <li>Preprint of the main paper (medRxiv or SocArXiv), then the peer-reviewed paper</li>
+  </ul>
+</div></section>
+
+</main>
+<footer class="wrap"><div class="col">Public, de-identified data from the National Cancer Institute (HINTS 7) and NCES/OECD (PIAAC Cycle 2). Raw files are not redistributed; code rebuilds every figure from the official downloads. Site last updated 18 October 2026.</div></footer>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(function(){
+  // ---------- tabs ----------
+  var tabs=[].slice.call(document.querySelectorAll('nav [role=tab]'));
+  var panels=[].slice.call(document.querySelectorAll('[role=tabpanel]'));
+  function show(id,push){
+    var ok=panels.some(function(p){return p.id===id}); if(!ok) id='overview';
+    panels.forEach(function(p){p.hidden=(p.id!==id)});
+    tabs.forEach(function(t){t.setAttribute('aria-selected',String(t.getAttribute('aria-controls')===id)); t.tabIndex=(t.getAttribute('aria-controls')===id)?0:-1});
+    if(push){ try{history.replaceState(null,'','#'+id)}catch(e){} }
+    window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){show(t.getAttribute('aria-controls'),true)});
+    t.addEventListener('keydown',function(e){
+      var j=i; if(e.key==='ArrowRight')j=(i+1)%tabs.length; else if(e.key==='ArrowLeft')j=(i-1+tabs.length)%tabs.length; else return;
+      e.preventDefault(); tabs[j].focus(); tabs[j].click();
+    });
+  });
+  show((location.hash||'#overview').slice(1).replace(/[^a-z]/g,''),false);
+  window.addEventListener('hashchange',function(){show(location.hash.slice(1).replace(/[^a-z]/g,''),false)});
+
+  // ---------- data (from analysis/step0, 2026-10-18) ----------
+  var Z=1.96;
+  var levels=[
+    {label:'Below Level 1', sub:'score < 176', est:11.5, se:0.66},
+    {label:'Level 1', sub:'176–225', est:16.1, se:0.85},
+    {label:'Level 2', sub:'226–275', est:28.5, se:1.14},
+    {label:'Level 3', sub:'276–325', est:30.6, se:1.05},
+    {label:'Level 4 and 5', sub:'326 and above', est:13.2, se:0.78}
+  ];
+  var edu=[
+    {label:'Less than high school', sub:'n = 476', est:55.5, se:2.36, pub:55},
+    {label:'High school', sub:'n = 1,614', est:32.3, se:1.71, pub:32},
+    {label:'More than high school', sub:'n = 1,668', est:13.1, se:1.48, pub:13}
+  ];
+  var forms=[
+    {label:'Very', est:65.3, se:0.97},{label:'Somewhat', est:23.53, se:0.94},{label:'A little', est:7.94, se:0.68},{label:'Not at all', est:3.22, se:0.36}
+  ];
+  var health=[
+    {label:'Excellent', a:{est:17.54,se:0.72}, b:{est:10.89,se:0.70}},
+    {label:'Very good', a:{est:32.0,se:1.09}, b:{est:34.37,se:0.98}},
+    {label:'Good', a:{est:29.66,se:0.86}, b:{est:37.26,se:1.18}},
+    {label:'Fair', a:{est:16.61,se:0.61}, b:{est:14.68,se:0.69}},
+    {label:'Poor', a:{est:4.19,se:0.34}, b:{est:2.80,se:0.36}}
+  ];
+  var verify=[
+    ['HINTS 7','Confident filling out medical forms: Very',64.1,64.1,0.93],['HINTS 7','Confident filling out medical forms: Somewhat',23.1,23.1,0.93],['HINTS 7','Confident filling out medical forms: A little',7.8,7.8,0.68],['HINTS 7','Confident filling out medical forms: Not at all',3.2,3.2,0.35],
+    ['HINTS 7','Any health insurance: Yes',90.3,90.3,0.24],['HINTS 7','Any health insurance: No',8.5,8.5,0.04],
+    ['HINTS 7','General health: Excellent',10.4,10.4,0.68],['HINTS 7','General health: Very good',33.0,33.0,0.96],['HINTS 7','General health: Good',35.7,35.7,1.12],['HINTS 7','General health: Fair',14.1,14.1,0.66],['HINTS 7','General health: Poor',2.7,2.7,0.35],
+    ['HINTS 7','Education: Less than high school',5.8,5.8,0.42],['HINTS 7','Education: High school graduate',19.9,19.9,0.64],['HINTS 7','Education: Some college',35.9,35.9,0.74],['HINTS 7','Education: College graduate or more',31.5,31.5,0.19],
+    ['PIAAC','Literacy, Level 1 or below, %',28,27.6,1.03],['PIAAC','Literacy, Level 3 or above, %',44,43.9,1.21],['PIAAC','Numeracy, Level 1 or below, %',34,34.2,1.16],['PIAAC','Numeracy, Level 3 or above, %',38,38.1,1.24],
+    ['PIAAC','Literacy average, men',257,256.7,1.96],['PIAAC','Literacy average, women',260,259.8,1.67],['PIAAC','Numeracy average, men',253,252.8,2.08],['PIAAC','Numeracy average, women',245,244.7,1.82],
+    ['PIAAC','Literacy Level 1 or below, men, %',29,29.2,1.61],['PIAAC','Literacy Level 1 or below, women, %',26,26.0,1.29],['PIAAC','Numeracy Level 1 or below, women, %',36,36.0,1.47],
+    ['PIAAC','Literacy average, less than high school',213,212.5,3.10],['PIAAC','Literacy Level 1 or below, less than high school, %',55,55.5,2.36],['PIAAC','Numeracy average, less than high school',199,199.0,3.23],['PIAAC','Numeracy Level 1 or below, less than high school, %',65,64.7,2.44],
+    ['PIAAC','Literacy average, high school',246,246.0,2.23],['PIAAC','Literacy Level 1 or below, high school, %',32,32.3,1.71],['PIAAC','Numeracy average, high school',232,232.3,2.34],
+    ['PIAAC','Literacy average, more than high school',287,287.1,2.35],['PIAAC','Literacy Level 1 or below, more than high school, %',13,13.1,1.48],['PIAAC','Numeracy Level 1 or below, more than high school, %',16,15.8,1.57]
+  ];
+
+  // ---------- chart builder: horizontal dot-and-interval ----------
+  var NS='http://www.w3.org/2000/svg';
+  function el(n,attrs,text){var e=document.createElementNS(NS,n);for(var k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e}
+  var tip=document.getElementById('tip');
+  function showTip(evt,lines){
+    tip.textContent=''; lines.forEach(function(l,i){var d=document.createElement(i===0?'b':'div');d.textContent=l;tip.appendChild(d)});
+    tip.hidden=false; moveTip(evt);
+  }
+  function moveTip(evt){var x=evt.clientX+14,y=evt.clientY+14;var w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>innerWidth-8)x=evt.clientX-w-14;if(y+h>innerHeight-8)y=evt.clientY-h-14;tip.style.left=x+'px';tip.style.top=y+'px'}
+  function hideTip(){tip.hidden=true}
+  function fmt(v,d){return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d)}
+
+  // rows: [{label, sub, series:[{est,se,color,name,pub}]}]
+  function dotChart(fig, rows, opts){
+    var W=760, labW=opts.labW||170, right=56, rowH=opts.rowH||(rows[0].series.length>1?44:36), top=22, bottom=30;
+    var H=top+rows.length*rowH+bottom, x0=labW, x1=W-right, max=opts.max||100;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':opts.aria||''});
+    function X(v){return x0+(v/max)*(x1-x0)}
+    // grid + ticks
+    var step=opts.step||20;
+    for(var t=0;t<=max;t+=step){var gx=X(t);svg.appendChild(el('line',{x1:gx,y1:top-6,x2:gx,y2:H-bottom+4,'class':'grid'}));svg.appendChild(el('text',{x:gx,y:H-bottom+18,'text-anchor':'middle','class':'lab2'},t+'%'))}
+    svg.appendChild(el('line',{x1:x0,y1:top-6,x2:x0,y2:H-bottom+4,'class':'axis'}));
+    rows.forEach(function(r,i){
+      var yc=top+i*rowH+rowH/2, k=r.series.length, off=(k>1)?10:0;
+      svg.appendChild(el('text',{x:x0-10,y:yc+(r.sub?-2:4),'text-anchor':'end','class':'lab'},r.label));
+      if(r.sub) svg.appendChild(el('text',{x:x0-10,y:yc+13,'text-anchor':'end','class':'lab2'},r.sub));
+      r.series.forEach(function(s,j){
+        var y=yc+(k>1?(j===0?-off:off):0), lo=s.est-Z*s.se, hi=s.est+Z*s.se;
+        var g=el('g',{tabindex:'0',role:'group','aria-label':(s.name?s.name+': ':'')+fmt(s.est,1)+'% (95% CI '+fmt(lo,1)+' to '+fmt(hi,1)+')'});
+        var hit=el('rect',{x:X(Math.max(0,lo))-12,y:y-12,width:X(Math.min(max,hi))-X(Math.max(0,lo))+24,height:24,'class':'hit'});
+        var inner=el('g');
+        inner.appendChild(el('line',{x1:X(lo),y1:y,x2:X(hi),y2:y,'class':'ci',stroke:s.color}));
+        if(s.pub!=null) inner.appendChild(el('line',{x1:X(s.pub),y1:y-9,x2:X(s.pub),y2:y+9,'class':'pub'}));
+        inner.appendChild(el('circle',{cx:X(s.est),cy:y,r:5,fill:s.color,'class':'dot'}));
+        if(opts.labels!==false) inner.appendChild(el('text',{x:X(hi)+8,y:y+4,'class':'val'},fmt(s.est,1)+'%'));
+        g.appendChild(hit); g.appendChild(inner);
+        var lines=[fmt(s.est,1)+'%', (s.name?s.name+' · ':'')+r.label, '95% CI '+fmt(lo,1)+' to '+fmt(hi,1)+' · SE '+fmt(s.se,2)];
+        if(s.pub!=null) lines.push('Published: '+s.pub+'%');
+        g.addEventListener('pointerenter',function(e){showTip(e,lines)}); g.addEventListener('pointermove',moveTip); g.addEventListener('pointerleave',hideTip);
+        g.addEventListener('focus',function(){var b=g.getBoundingClientRect();showTip({clientX:b.left+b.width/2,clientY:b.top},lines)}); g.addEventListener('blur',hideTip);
+        svg.appendChild(g);
+      });
+    });
+    fig.querySelector('.chart').appendChild(svg);
+    // table view
+    var tb=fig.querySelector('.dtable'), table=document.createElement('table'), thead=document.createElement('thead'), tr=document.createElement('tr');
+    var heads=['Category'].concat(rows[0].series.length>1?rows[0].series.map(function(s){return s.name}):['Estimate (%)']).concat(['95% CI','SE']);
+    if(rows[0].series[0].pub!=null) heads.push('Published');
+    heads.forEach(function(h,i){var th=document.createElement('th');th.textContent=h;if(i>0)th.className='n';tr.appendChild(th)}); thead.appendChild(tr); table.appendChild(thead);
+    var tbody=document.createElement('tbody');
+    rows.forEach(function(r){
+      r.series.forEach(function(s,j){
+        var trr=document.createElement('tr'); var cells=[r.label+(r.series.length>1?' · '+s.name:'')];
+        if(r.series.length>1){ r.series.forEach(function(ss,jj){cells.push(jj===j?fmt(s.est,1):'')}) } else cells.push(fmt(s.est,1));
+        cells.push(fmt(s.est-Z*s.se,1)+' to '+fmt(s.est+Z*s.se,1)); cells.push(fmt(s.se,2)); if(s.pub!=null) cells.push(String(s.pub));
+        cells.forEach(function(c,i){var td=document.createElement('td');td.textContent=c;if(i>0)td.className='n';trr.appendChild(td)}); tbody.appendChild(trr);
+      });
+    });
+    table.appendChild(tbody); tb.appendChild(table);
+  }
+  var c1=getComputedStyle(document.documentElement).getPropertyValue('--s1').trim()||'#2a78d6', c2=getComputedStyle(document.documentElement).getPropertyValue('--s2').trim()||'#eb6834';
+  // theme changes: redraw series colors by reading tokens via CSS variables on marks
+  function col(v){return 'var('+v+')'}
+  dotChart(document.getElementById('fig-levels'), levels.map(function(d){return {label:d.label,sub:d.sub,series:[{est:d.est,se:d.se,color:col('--s1')}]}}), {max:40,step:10,labW:150,aria:'Dot plot of PIAAC literacy levels with confidence intervals'});
+  dotChart(document.getElementById('fig-edu'), edu.map(function(d){return {label:d.label,sub:d.sub,series:[{est:d.est,se:d.se,color:col('--s1'),pub:d.pub}]}}), {max:70,step:10,labW:180,aria:'Dot plot of literacy at or below Level 1 by education with published values'});
+  dotChart(document.getElementById('fig-forms'), forms.map(function(d){return {label:d.label,series:[{est:d.est,se:d.se,color:col('--s2')}]}}), {max:80,step:20,labW:110,aria:'Dot plot of confidence filling out medical forms'});
+  dotChart(document.getElementById('fig-health'), health.map(function(d){return {label:d.label,series:[{est:d.a.est,se:d.a.se,color:col('--s1'),name:'PIAAC'},{est:d.b.est,se:d.b.se,color:col('--s2'),name:'HINTS 7'}]}}), {max:50,step:10,labW:110,labels:false,aria:'Dot plot comparing self-rated health in PIAAC and HINTS'});
+
+  // verification table
+  (function(){
+    var tb=document.querySelector('#fig-verify .dtable'), table=document.createElement('table'), thead=document.createElement('thead'), tr=document.createElement('tr');
+    ['Survey','Statistic','Published','Reproduced','SE','Diff'].forEach(function(h,i){var th=document.createElement('th');th.textContent=h;if(i>1)th.className='n';tr.appendChild(th)}); thead.appendChild(tr); table.appendChild(thead);
+    var tbody=document.createElement('tbody');
+    verify.forEach(function(v){var trr=document.createElement('tr');[v[0],v[1],String(v[2]),fmt(v[3],1),fmt(v[4],2),(v[3]-v[2]>=0?'+':'')+fmt(v[3]-v[2],1)].forEach(function(c,i){var td=document.createElement('td');td.textContent=c;if(i>1)td.className='n';trr.appendChild(td)});tbody.appendChild(trr)});
+    table.appendChild(tbody); tb.appendChild(table);
+  })();
+
+  // show/hide data tables
+  [].slice.call(document.querySelectorAll('figure .toggle')).forEach(function(b){
+    b.addEventListener('click',function(){var t=b.closest('figure').querySelector('.dtable');t.hidden=!t.hidden;b.setAttribute('aria-expanded',String(!t.hidden));b.textContent=t.hidden?'Show data':'Hide data'});
+  });
+})();
+</script>
