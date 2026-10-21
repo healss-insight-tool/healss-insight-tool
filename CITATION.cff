@@ -5,6 +5,10 @@ type: software
 version: 0.1.0
 date-released: 2026-10-21
 doi: 10.5281/zenodo.23537391
+identifiers:
+  - type: doi
+    value: 10.17605/OSF.IO/CEZTJ
+    description: OSF preregistration of the study
 repository-code: https://github.com/healss-insight-tool/healss-insight-tool
 url: https://healss-insight-tool.github.io/healss-insight-tool/
 license: MIT

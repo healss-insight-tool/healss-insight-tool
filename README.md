@@ -1,6 +1,6 @@
 # HeaLSS Insight Tool
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23537391.svg)](https://doi.org/10.5281/zenodo.23537391) [![OSF](https://img.shields.io/badge/OSF-preregistration-blue)](https://osf.io/ceztj)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23537391.svg)](https://doi.org/10.5281/zenodo.23537391) [![OSF](https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2FCEZTJ-blue)](https://doi.org/10.17605/OSF.IO/CEZTJ)
 
 **Health Literacy Skilling and Scaling.** A data tool that gives insight on existing health-literacy policy and literature by placing two national measurements side by side: how confident U.S. adults say they are with health information (HINTS 7, 2024) and how well they actually read (PIAAC Cycle 2, 2023). It is not a training program.
 
@@ -15,7 +15,7 @@ Authors: Ashley Lewis (first author, project lead; [ORCID 0009-0005-0811-6221](h
 | Raw data archived with checksums (HINTS 7, PIAAC Cycle 2 U.S., ACS 2024 PUMS) | done |
 | Harmonization codebook (`analysis/crosswalk/`) | done |
 | Pipeline validation against published figures (`analysis/step0/`) | done |
-| OSF preregistration | registered 2026-10-20: [osf.io/ceztj](https://osf.io/ceztj) |
+| OSF preregistration | registered 2026-10-20: [osf.io/ceztj](https://osf.io/ceztj), DOI [10.17605/OSF.IO/CEZTJ](https://doi.org/10.17605/OSF.IO/CEZTJ) |
 | Confirmatory analysis (education gradients, difference in gaps) | done 2026-10-20: [results](analysis/confirmatory/results/results.md). H1 and H2 supported, robust across all sensitivity variants |
 | Exploratory Medicaid bridge through the ACS (`analysis/acs_bridge/`) | [results](analysis/acs_bridge/bridge_results.md), disclosed pre-registration pilot |
 | Website (`site/`) | live at [healss-insight-tool.github.io](https://healss-insight-tool.github.io/healss-insight-tool/) |
