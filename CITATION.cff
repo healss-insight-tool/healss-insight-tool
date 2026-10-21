@@ -3,7 +3,10 @@ message: "If you use this code or the harmonization codebook, please cite it as 
 title: "HeaLSS Insight Tool: confidence versus competence in U.S. health literacy (HINTS 7 and PIAAC Cycle 2)"
 type: software
 version: 0.1.0
-date-released: 2026-10-20
+date-released: 2026-10-21
+doi: 10.5281/zenodo.23537391
+repository-code: https://github.com/healss-insight-tool/healss-insight-tool
+url: https://healss-insight-tool.github.io/healss-insight-tool/
 license: MIT
 authors:
   - family-names: Lewis

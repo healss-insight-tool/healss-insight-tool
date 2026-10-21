@@ -1,5 +1,7 @@
 # HeaLSS Insight Tool
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23537391.svg)](https://doi.org/10.5281/zenodo.23537391) [![OSF](https://img.shields.io/badge/OSF-preregistration-blue)](https://osf.io/ceztj)
+
 **Health Literacy Skilling and Scaling.** A data tool that gives insight on existing health-literacy policy and literature by placing two national measurements side by side: how confident U.S. adults say they are with health information (HINTS 7, 2024) and how well they actually read (PIAAC Cycle 2, 2023). It is not a training program.
 
 Study: *Comparing self-reported health-information confidence (HINTS 7, 2024) with measured literacy (PIAAC Cycle 2, 2023) among U.S. adults, by education.*
@@ -16,7 +18,8 @@ Authors: Ashley Lewis (first author, project lead; [ORCID 0009-0005-0811-6221](h
 | OSF preregistration | registered 2026-10-20: [osf.io/ceztj](https://osf.io/ceztj) |
 | Confirmatory analysis (education gradients, difference in gaps) | done 2026-10-20: [results](analysis/confirmatory/results/results.md). H1 and H2 supported, robust across all sensitivity variants |
 | Exploratory Medicaid bridge through the ACS (`analysis/acs_bridge/`) | [results](analysis/acs_bridge/bridge_results.md), disclosed pre-registration pilot |
-| Website (`site/`) | version 5 |
+| Website (`site/`) | live at [healss-insight-tool.github.io](https://healss-insight-tool.github.io/healss-insight-tool/) |
+| Release v0.1.0 archived on Zenodo | [10.5281/zenodo.23537391](https://doi.org/10.5281/zenodo.23537391) (2026-10-21) |
 
 ## What is here
 
@@ -46,7 +49,7 @@ Measured literacy rises 61 points across education (share at or above PIAAC Leve
 
 ## Citation and licence
 
-Code is released under the MIT licence (`LICENSE`); the codebook and site text under CC BY 4.0. Cite using `CITATION.cff`. A Zenodo DOI for each tagged release will be listed here.
+Code is released under the MIT licence (`LICENSE`); the codebook and site text under CC BY 4.0. Cite using `CITATION.cff` or the Zenodo record for release v0.1.0: [10.5281/zenodo.23537391](https://doi.org/10.5281/zenodo.23537391). Each tagged release receives its own version DOI on Zenodo.
 
 ## Disclosures
 
