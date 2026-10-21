@@ -4,7 +4,7 @@
 
 Study: *Comparing self-reported health-information confidence (HINTS 7, 2024) with measured literacy (PIAAC Cycle 2, 2023) among U.S. adults, by education.*
 
-Authors: Ashley Lewis (lead; [ORCID 0009-0005-0811-6221](https://orcid.org/0009-0005-0811-6221)) and Tyler L. Jones (data pipeline and statistics; [ORCID 0009-0007-5393-7584](https://orcid.org/0009-0007-5393-7584)), independent researchers.
+Authors: Ashley Lewis (first author, project lead; [ORCID 0009-0005-0811-6221](https://orcid.org/0009-0005-0811-6221)) and Tyler L. Jones (second author, data pipeline and statistics; [ORCID 0009-0007-5393-7584](https://orcid.org/0009-0007-5393-7584)), independent researchers.
 
 ## Status
 
@@ -42,7 +42,7 @@ Confidence and competence are never measured on the same person. Each quantity i
 
 ## Headline result (registered analysis, adults 20 to 65)
 
-Measured literacy rises 61 points across education (share at or above PIAAC Level 2, no diploma to bachelor's or higher; 95% CI 54 to 69), but self-reported confidence rises only 30 points (CI 19 to 41). The difference in gaps is 31 points (CI 18 to 45). Among adults with no high school diploma, 46% say they are very confident filling out medical forms while 28% read at Level 2 or above. Both registered hypotheses are supported, and every pre-specified sensitivity variant agrees. Full tables: [analysis/confirmatory/results/results.md](analysis/confirmatory/results/results.md).
+Measured literacy rises 61 points across education (share at or above PIAAC Level 2, no diploma to bachelor's or higher; 95% CI 54 to 69), but self-reported confidence rises only 30 points (CI 19 to 41). The difference in gaps is 31 points (CI 18 to 45). Among adults with no high school diploma, 46% say they are very confident filling out medical forms while 28% read at Level 2 or above. Both registered hypotheses are supported, and every pre-specified sensitivity variant agrees. Full tables: [analysis/confirmatory/results/results.md](analysis/confirmatory/results/results.md). Plain-language account: [findings_plain_language.md](analysis/confirmatory/results/findings_plain_language.md).
 
 ## Citation and licence
 
